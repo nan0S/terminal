@@ -60,7 +60,7 @@ int main()
 
 	int status = 1, flag;
 	char* line;
-	char* redirect;
+	char* redirect = NULL;
 	char** args;
 
 	while (status)
@@ -91,14 +91,14 @@ void login()
 
 char* get_prompt()
 {
-	char* prompt = malloc(128 * sizeof(char));
-
-	static char path[64];
+	static char path[1000];
 	getcwd(path, sizeof(path));
+
 	char* dir = path + strlen(path);
-	while (*dir != '/')
+	while ( *(dir - 1) != '/')
 		--dir;
 
+	char* prompt;
 	asprintf(&prompt, "\e[31m[\e[33m%s\e[32m@\e[34m%s\e[35m %s\e[31m]\e[m$ ", username, hostname, dir);
 	return prompt;
 }
@@ -127,6 +127,7 @@ void trim(char* word)
 	word[end + 1 - begin] = '\0';
 }
 
+#include <assert.h>
 char** parse_line(char* line, char** redirect, int* flag)
 {
 	*flag = NONE;
